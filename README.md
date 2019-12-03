@@ -24,7 +24,7 @@ querys_docs与generateresult函数为生成最终的submission.csv文件，并�
 **bool加权模型.txt:**  
 采用第一个方法之前的第0个方法：bool模型，并进行加权处理，效果不好，已删除源码
 
-**test_querys.txt, test_docs.txt, tingyongcibiao.txt**  
+**test_querys.txt, test_docs.txt, stopwordsList.txt**  
 实验所需文档
 
 

@@ -17,8 +17,7 @@ def read_csv(path):
 
 #######################################
 # Separate words
-
-tingyongci_filepath = './tingyongcibiao.txt'
+stopwordsList_fp = './stopwordsList.txt'
 
 def separateWord(words):
     fencilist = []
@@ -32,7 +31,7 @@ def stopwordslist(filepath):
 
 
 def delete_stopwords(fencilist):
-    stopwords = stopwordslist(tingyongci_filepath)
+    stopwords = stopwordslist(stopwordsList_fp)
     outlist = []
     for word in fencilist:
         if word not in stopwords:
