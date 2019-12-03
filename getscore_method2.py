@@ -1,10 +1,8 @@
-
-import separatewords as sw
-import readcsv
+from utils import *
 import math
 
 
-def write_file(filepath,str):
+def write_file(filepath, str):
     fh = open(filepath, 'a')
     fh.write(str)
     fh.close()
@@ -53,7 +51,7 @@ def average_length_docs(docs):
 
 def sort(query,docs):
     scoresdict={}
-    fenci = sw.delete_stopwords(sw.fenci(query))
+    fenci = delete_stopwords(separateWord(query))
     idf_qi = [0 for _ in range(len(fenci))]
     N=len(docs)
     for i in range(len(fenci)):
@@ -86,8 +84,8 @@ def querys_docs(querys,docs):
 def generateresult():
     path1 = './test_querys.csv'
     path2 = './test_docs.csv'
-    querys=readcsv.read_csv(path1)
-    docs=readcsv.read_csv(path2)
+    querys=read_csv(path1)
+    docs=read_csv(path2)
     querys_docs(querys, docs)
 
 generateresult()

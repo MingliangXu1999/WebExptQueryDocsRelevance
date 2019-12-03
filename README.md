@@ -2,14 +2,10 @@
 
 ## 给定指定的docs和一系列的querys，给出每个查询的相关度最高的前20个文档id
 
-**readcsv.py:**  
-用于之后的读取test_querys.csv和test_docs.csv，输出为list,并删除list第一个值如query,query_id  
-
-**deleterepeateddocs.py**:  
-在list中删除重复的文章.
-
-**separatewords.py:**  
-用于将每一个查询进分词，并将分词的结果输出为list,在更改分词方法是之前，分词方法为jieba.cut_for_search(),更改后为jieba.cut()
+**utils.py**
+- 用于之后的读取test_querys.csv和test_docs.csv，输出为list,并删除list第一个值如query,query_id  
+- 在list中删除重复的文章.
+- 用于将每一个查询进分词，并将分词的结果输出为list,在更改分词方法是之前，分词方法为jieba.cut_for_search(),更改后为jieba.cut()
 分词之后删除停用词
 
 **get_method1.py**:  
