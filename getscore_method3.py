@@ -3,16 +3,9 @@ import math
 import jieba
 
 
-def write_file(filepath, string):
-    fh = open(filepath, 'a')
-    fh.write(string)
-    fh.close()
-
-
 '''
 # tf-idf算法
 '''
-
 
 def get_score(query, doc, ki, docslength, separateWords, idf_qi):
     score = 0.0
@@ -54,7 +47,7 @@ def average_length_docs(docs):
 
 def sort(query, docs, docslength):
     scorbutic = {}
-    separateWords = delete_stopwords(separateWord(query))
+    separateWords = deleteStopwords(cutWord(query))
     idf_qi = [0 for _ in range(len(separateWords))]
     N = len(docs)
     for i in range(len(separateWords)):
@@ -74,12 +67,12 @@ def sort(query, docs, docslength):
 
 def querys_docs(querys, docs):
     write_file('./submission.csv', 'query_id,doc_id' + '\n')
-    docslength = []
+    docsLength = [len(deleteStopwords(jieba.cut(docInfo[3]))) for docInfo in docs]
 
     # #####################################################################
     # 此块内容已经读入 '文章长度.txt'中,可以改写代码从文件读入以节约时间
-    for i in range(len(docs)):
-        docslength.append(len(delete_stopwords(jieba.cut(docs[i][3]))))
+    # for i in range(len(docs)):
+    #     docslength.append(len(deleteStopwords(jieba.cut(docs[i][3]))))
         # if(i%100==0):
         #     print(i)
         # print(docslength[i])
@@ -87,7 +80,7 @@ def querys_docs(querys, docs):
 
     for i in range(len(querys)):
         print('Completed search: "' + querys[i][0] + '"')
-        dicta = sort(querys[i][0], docs, docslength)
+        dicta = sort(querys[i][0], docs, docsLength)
         for j in range(20):
             print(querys[i][0] + ',' + docs[dicta[j][0]][2])
             write_file('./submission.csv', str(querys[i][1] + ',' + docs[dicta[j][0]][0] + '\n'))
@@ -99,9 +92,9 @@ def generateResult():
     path2 = './test_docs.csv'
     querys = read_csv(path1)
     docs = read_csv(path2)
-    delete_docs(docs)
-    querys_docs(querys, docs)
+    dedupDocs = deduplication(docs)
+    querys_docs(querys, dedupDocs)
 
 
-
-generateResult()
+if __name__=='__main__':
+    generateResult()

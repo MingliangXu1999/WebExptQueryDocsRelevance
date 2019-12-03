@@ -2,11 +2,6 @@ from utils import *
 import math
 
 
-def write_file(filepath, str):
-    fh = open(filepath, 'a')
-    fh.write(str)
-    fh.close()
-
 '''
 # BM25算法(非语义匹配)
 ## 基于分词过后的加权计分算法
@@ -59,7 +54,7 @@ def sort(query,docs):
             if (cutWords[i] in docs[j][3]):
                 nqi = nqi + 1
         #print("{\"" + fenci[i] + "\" : " + str(nqi) + "},")
-        idf_qi[i] = math.log2((N + 0.5) / (nqi + 0.5))
+        idf_qi[i] = math.log10((N + 0.5) / (nqi + 0.5))
     for i in range(len(docs)):
         scoresdict.update({i:get_score(query,docs[i],docs,cutWords,idf_qi)})
     L=sorted(scoresdict.items(),key=lambda item:item[1])
@@ -68,14 +63,13 @@ def sort(query,docs):
 
 def querys_docs(querys,docs):
     dictt={}
-    write_file('./submission_BM25_更改分词方法_去重.csv','query_id,doc_id'+'\n')
+    write_file('./submission_BM25.csv','query_id,doc_id'+'\n')
     for i in range(len(querys)):
-        print('Completed search: "'+querys[i][0]+'"')
-        print('Finished percentage: {}%'.format((i+1)/len(querys)*100))
         dictt=sort(querys[i][0], docs)
         for  j in range(20):
-            # print(querys[i][0]+','+docs[dictt[j][0]][2])
-            write_file('./submission_BM25_更改分词方法_去重.csv',str(querys[i][1]+','+docs[dictt[j][0]][0]+'\n'))
+            write_file('./submission_BM25.csv',str(querys[i][1]+','+docs[dictt[j][0]][0]+'\n'))
+        print('Completed search: "' + querys[i][0] + '"')
+        print('Finished percentage: {}%'.format((i + 1) / len(querys) * 100))
         print('\n')
 
 

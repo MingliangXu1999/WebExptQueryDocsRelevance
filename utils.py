@@ -3,7 +3,7 @@ import jieba
 
 
 #######################################
-# Read csv file
+# IO file
 def read_csv(path):
     # 读取信息存放在指定列表中
     a = []
@@ -13,6 +13,11 @@ def read_csv(path):
             a.append(line)
     a.pop(0)
     return a
+
+def write_file(filepath, string):
+    fh = open(filepath, 'a')
+    fh.write(string)
+    fh.close()
 
 
 #######################################
@@ -41,18 +46,3 @@ def deleteStopwords(cutWords):
 # Delete repeated docs
 def deduplication(docs):
     return list(set([tuple(doc) for doc in docs]))
-    # i=0
-    # while(i!=len(docs)-1):
-    #     j=i+1
-    #     while(j!=len(docs)):
-    #         if(docs[i][0]==docs[j][0]):
-    #             #print(i)
-    #             #print(j)
-    #             #print(docs[i])
-    #             #print(docs[j])
-    #             #docs.pop(j)
-    #             del(docs[j])
-    #             j=j-1
-    #         else:
-    #             j=j+1
-    #     i=i+1
