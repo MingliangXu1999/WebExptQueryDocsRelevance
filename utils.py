@@ -19,41 +19,40 @@ def read_csv(path):
 # Separate words
 stopwordsList_fp = './stopwordsList.txt'
 
-def separateWord(words):
-    fencilist = []
-    fencilist = jieba.cut(words)
-    return fencilist
+def cutWord(words):
+    cutWords = jieba.cut(words)
+    return cutWords
 
 
-def stopwordslist(filepath):
+def stopwordsList(filepath):
     stopwords = [line.strip() for line in open(filepath, 'r', encoding='utf-8').readlines()]
     return stopwords
 
 
-def delete_stopwords(fencilist):
-    stopwords = stopwordslist(stopwordsList_fp)
+def deleteStopwords(cutWords):
+    stopwords = stopwordsList(stopwordsList_fp)
     outlist = []
-    for word in fencilist:
-        if word not in stopwords:
-            if word != '\t':
-                outlist.append(word)
+    for word in cutWords:
+        if word not in stopwords and word != '\t':
+            outlist.append(word)
     return outlist
 
 #######################################
 # Delete repeated docs
-def delete_docs(docs):
-    i=0
-    while(i!=len(docs)-1):
-        j=i+1
-        while(j!=len(docs)):
-            if(docs[i][0]==docs[j][0]):
-                #print(i)
-                #print(j)
-                #print(docs[i])
-                #print(docs[j])
-                #docs.pop(j)
-                del(docs[j])
-                j=j-1
-            else:
-                j=j+1
-        i=i+1
+def deduplication(docs):
+    return list(set([tuple(doc) for doc in docs]))
+    # i=0
+    # while(i!=len(docs)-1):
+    #     j=i+1
+    #     while(j!=len(docs)):
+    #         if(docs[i][0]==docs[j][0]):
+    #             #print(i)
+    #             #print(j)
+    #             #print(docs[i])
+    #             #print(docs[j])
+    #             #docs.pop(j)
+    #             del(docs[j])
+    #             j=j-1
+    #         else:
+    #             j=j+1
+    #     i=i+1

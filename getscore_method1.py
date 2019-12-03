@@ -50,19 +50,18 @@ def average_length_docs(docs):
 
 def sort(query,docs):
     scoresdict={}
-    fenci = delete_stopwords(separateWord(query))
-    idf_qi = [0 for _ in range(len(fenci))]
-    N=len(docs)
-    for i in range(len(fenci)):
+    cutWords = deleteStopwords(cutWord(query))
+    idf_qi = [0 for _ in range(len(cutWords))]
+    N = len(docs)
+    for i in range(len(cutWords)):
         nqi = 0
         for j in range(len(docs)):
-            if (fenci[i] in docs[j][3]):
-                #print(docs[j][3][1:-1])
+            if (cutWords[i] in docs[j][3]):
                 nqi = nqi + 1
         #print("{\"" + fenci[i] + "\" : " + str(nqi) + "},")
         idf_qi[i] = math.log2((N + 0.5) / (nqi + 0.5))
     for i in range(len(docs)):
-        scoresdict.update({i:get_score(query,docs[i],docs,fenci,idf_qi)})
+        scoresdict.update({i:get_score(query,docs[i],docs,cutWords,idf_qi)})
     L=sorted(scoresdict.items(),key=lambda item:item[1])
     return L[-20:]
 
@@ -72,20 +71,21 @@ def querys_docs(querys,docs):
     write_file('./submission_BM25_更改分词方法_去重.csv','query_id,doc_id'+'\n')
     for i in range(len(querys)):
         print('Completed search: "'+querys[i][0]+'"')
+        print('Finished percentage: {}%'.format((i+1)/len(querys)*100))
         dictt=sort(querys[i][0], docs)
         for  j in range(20):
-            print(querys[i][0]+','+docs[dictt[j][0]][2])
+            # print(querys[i][0]+','+docs[dictt[j][0]][2])
             write_file('./submission_BM25_更改分词方法_去重.csv',str(querys[i][1]+','+docs[dictt[j][0]][0]+'\n'))
         print('\n')
-
 
 
 def generateresult():
     path1 = './test_querys.csv'
     path2 = './test_docs.csv'
-    querys=read_csv(path1)
-    docs=read_csv(path2)
-    delete_docs(docs)
-    querys_docs(querys, docs)
+    querys = read_csv(path1)
+    docs = read_csv(path2)
+    dedupDocs = deduplication(docs)
+    querys_docs(querys, dedupDocs)
 
-generateresult()
+if __name__=='__main__':
+    generateresult()
