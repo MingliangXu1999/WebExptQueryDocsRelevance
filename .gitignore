@@ -127,3 +127,4 @@ dmypy.json
 
 test_docs.csv
 test_querys.csv
+.idea/
