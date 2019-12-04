@@ -15,8 +15,8 @@ def get_score_BM25F(query, doc, queryWords, idf_qi):
     content = doc[3]
     qeuryWordsNum = len(queryWords)
 
-    boost_t = 3
-    boost_c = 1.5
+    boost_t = 10
+    boost_c = 1
     b_t = 0.75
     b_c = 0.75
     k1 = 1.2  # 经验参数， k1 一般设置为 1.2
@@ -34,16 +34,16 @@ def get_score_BM25F(query, doc, queryWords, idf_qi):
 def sort(query, docs):
     scoresdict={}
     cutQueryWords = deleteStopwords(cutWord(query))
-    idf_qi = [0 for _ in range(len(cutQueryWords))]
+    idf_t = [0 for _ in range(len(cutQueryWords))]
     N = len(docs)
     for i in range(len(cutQueryWords)):
-        df_qi = 0
+        ni = 0
         for doc in docs:
             if (cutQueryWords[i] in doc[3]):
-                df_qi += 1
-        idf_qi[i] = math.log10((N + 0.5) / (df_qi + 0.5))
+                ni += 1
+        idf_t[i] = math.log10((N + 0.5) / (ni + 0.5))
     for i in range(len(docs)):
-        scoresdict.update({i : get_score_BM25F(query, docs[i], cutQueryWords, idf_qi)})
+        scoresdict.update({i : get_score_BM25F(query, docs[i], cutQueryWords, idf_t)})
     L=sorted(scoresdict.items(), key=lambda item:item[1])
     return L[-20:]
 
