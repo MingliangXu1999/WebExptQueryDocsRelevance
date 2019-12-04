@@ -13,7 +13,7 @@ def get_score_BM25F(query, doc, queryWords, idf_qi):
     score = 0.0
     title = doc[2]
     content = doc[3]
-    queryWordsNam = len(queryWords)
+    queryWordsNum = len(queryWords)
 
     boost_t = 1000
     boost_c = 1
@@ -21,11 +21,11 @@ def get_score_BM25F(query, doc, queryWords, idf_qi):
     b_c = 0.75
     k1 = 3.5     # 经验参数， k1 = 3.5 一般设置为 1.2
 
-    weight_td = [0 for _ in range(queryWordsNam)]
-    for i in range(queryWordsNam):
+    weight_td = [0 for _ in range(queryWordsNum)]
+    for i in range(queryWordsNum):
         weight_td[i] += (title.count(queryWords[i]) * boost_t) / ((1 - b_t) + b_t * len(title)/AVL_TITLE)
         weight_td[i] += (content.count(queryWords[i]) * boost_c) / ((1 - b_c) + b_c * len(content)/AVL_CONTENT)
-    for i in range(queryWordsNam):
+    for i in range(queryWordsNum):
         # if weight_td[i] != 0:
         #     print(weight_td[i])
         score += idf_qi[i] * weight_td[i] / (k1 + weight_td[i])
@@ -53,9 +53,7 @@ def sort(query, docs):
     for i in range(len(docs)):
         scoresdict.update({i : get_score_BM25F(query, docs[i], cutQueryWords, idf_t)})
     L = sorted(scoresdict.items(), key=lambda item:item[1])
-    a = L[-20:]
-    b = a[::-1]
-    return b
+    return L[:-21:-1]
 
 
 def querys_docs(querys, docs):
