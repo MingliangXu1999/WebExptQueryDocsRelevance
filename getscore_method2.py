@@ -15,7 +15,7 @@ def get_score_BM25F(query, doc, queryWords, idf_qi):
     content = doc[3]
     qeuryWordsNum = len(queryWords)
 
-    boost_t = 10
+    boost_t = 1000
     boost_c = 1
     b_t = 0.75
     b_c = 0.75
