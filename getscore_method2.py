@@ -7,25 +7,27 @@ AVL_TITLE = 28
 '''
 # BM25F算法(非语义匹配)
 ## 对于BM25算法的优化
-##优化了对文章标题，文章描述的权重分析
+## 优化了对文章标题，文章描述的权重分析
 '''
 def get_score_BM25F(query, doc, queryWords, idf_qi):
     score = 0.0
     title = doc[2]
     content = doc[3]
-    qeuryWordsNum = len(queryWords)
+    queryWordsNam = len(queryWords)
 
     boost_t = 1000
     boost_c = 1
     b_t = 0.75
     b_c = 0.75
-    k1 = 1.2  # 经验参数， k1 一般设置为 1.2
+    k1 = 3.5     # 经验参数， k1 = 3.5 一般设置为 1.2
 
-    weight_td = [0 for _ in range(qeuryWordsNum)]
-    for i in range(qeuryWordsNum):
+    weight_td = [0 for _ in range(queryWordsNam)]
+    for i in range(queryWordsNam):
         weight_td[i] += (title.count(queryWords[i]) * boost_t) / ((1 - b_t) + b_t * len(title)/AVL_TITLE)
         weight_td[i] += (content.count(queryWords[i]) * boost_c) / ((1 - b_c) + b_c * len(content)/AVL_CONTENT)
-    for i in range(qeuryWordsNum):
+    for i in range(queryWordsNam):
+        # if weight_td[i] != 0:
+        #     print(weight_td[i])
         score += idf_qi[i] * weight_td[i] / (k1 + weight_td[i])
 
     return score
@@ -34,6 +36,12 @@ def get_score_BM25F(query, doc, queryWords, idf_qi):
 def sort(query, docs):
     scoresdict={}
     cutQueryWords = deleteStopwords(cutWord(query))
+
+    ##############################
+    # 添加query自身到cutword中
+    cutQueryWords.append(query)
+    ##############################
+
     idf_t = [0 for _ in range(len(cutQueryWords))]
     N = len(docs)
     for i in range(len(cutQueryWords)):
@@ -44,8 +52,10 @@ def sort(query, docs):
         idf_t[i] = math.log10((N + 0.5) / (ni + 0.5))
     for i in range(len(docs)):
         scoresdict.update({i : get_score_BM25F(query, docs[i], cutQueryWords, idf_t)})
-    L=sorted(scoresdict.items(), key=lambda item:item[1])
-    return L[-20:]
+    L = sorted(scoresdict.items(), key=lambda item:item[1])
+    a = L[-20:]
+    b = a[::-1]
+    return b
 
 
 def querys_docs(querys, docs):
@@ -56,11 +66,11 @@ def querys_docs(querys, docs):
         for  j in range(20):
             write_file('./submission_BM25F.csv',str(querys[i][1]+','+docs[dictt[j][0]][0]+'\n'))
         print('Completed search: "' + querys[i][0] + '"')
-        print('Finished percentage: {}%'.format((i + 1) / len(querys) * 100))
+        print('Finished percentage: {0:.2f}%'.format((i + 1) / len(querys) * 100))
         print('\n')
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     path1 = './test_querys.csv'
     path2 = './test_docs.csv'
     querys = read_csv(path1)
