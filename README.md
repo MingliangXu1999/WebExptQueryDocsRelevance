@@ -13,10 +13,9 @@
 第一个算法：使用BM25算法，忽略第三项查询与查询之间的联系，并稍简化，参考 https://cloud.tencent.com/developer/article/1464866.  
 其中，get_score函数为处理每个查询与每个文档之间的score,函数内部的average_length_docs=2469通过average_length_docs(docs)函数获得，可能去重之后该值发生变化，尚未修改;  
 sort函数返回一个查询与所有最相关文章的前20个结果;  
-querys_docs与generateresult函数为生成最终的submission.csv文件，并在命令行输出查询的文章标题;  
 
 **get_method2.py:**  
-暂时与第一个方法完全相同，准备修改为BM25F算法.
+第二个算法： 使用BM25F算法 目前效果最好
 
 **BM25算法结果.txt:**  
 列举出每个查询与其相关度最高的20个文章标题，方便查看
