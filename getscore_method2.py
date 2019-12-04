@@ -65,10 +65,5 @@ if __name__=='__main__':
     path2 = './test_docs.csv'
     querys = read_csv(path1)
     docs = read_csv(path2)
-    sum = 0
-    for i in range(len(docs)):
-        sum = sum + len(docs[i][2])
-    average = sum / len(docs)
-    print(average)
     dedupDocs = deduplication(docs)
     querys_docs(querys, dedupDocs)
