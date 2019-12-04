@@ -2,66 +2,55 @@ from utils import *
 import math
 
 
+average_length_docs = 2469  # 通过对应函数获得平均文章长度
+
+
 '''
 # BM25算法(非语义匹配)
 ## 基于分词过后的加权计分算法
     score=\sigma(idf_qi*R(q_i,d))
 '''
-def get_score(query,doc,docs,fenci,idf_qi):
+def get_score(query, doc, queryWords, idf_qi):
     score = 0.0
     title = doc[2]
     content = doc[3]
-    #通过对应函数获得平均文章长度
-    average_length_docs=2469
-    k=0.25+0.75*len(content)/average_length_docs
-    Ri=[0 for _ in range(len(fenci))]
-    fi=[0 for _ in range(len(fenci))]
-    for i in range(len(fenci)):
-        start=0
-        while(start>=0):
-            pos=content.find(fenci[i],start)
-            if(pos<0):
-                break
-            fi[i]=fi[i]+1
-            start=pos+len(fenci[i])
-    for i in range(len(fenci)):
-        Ri[i]=2*fi[i]/(fi[i]+k)
-    for i in range (len(fenci)):
-        score=score+Ri[i]*idf_qi[i]
-    if (title.find(query)==0):
-        score = score*2
-    if (content.find(query)==0):
-        score = score*1.5
-    #if(score!=0.0):
-    #    print(score)
+    qeuryWordsNum = len(queryWords)
+    k1 = 1.2    # 经验参数， k1 一般设置为 1.2
+    k2 = 500    # 调节因子，一般取值为 0~1000
+    b = 0.75    # 调节因子，将 b 设为 0 时，文档长度因素将不起作用，经验表明一般 b=0.75
+    K = k1 * ((1 - b) + b * len(content) / average_length_docs)
+    fi = [title.count(queryWords[i]) for i in range(qeuryWordsNum)]
+    qfi = [query.count(queryWords[i]) for i in range(qeuryWordsNum)]
+    R2 = [(1 + k1) * fi[i] / (fi[i] + K) for i in range(qeuryWordsNum)] # 查询词的 term 在 Doc 中的权重
+    R3 = [(1 + k2) * qfi[i] / (k2 + qfi[i]) for i in range(qeuryWordsNum)] # 查询词的 term 在查询本身的权重
+
+    for i in range(qeuryWordsNum):
+        score += idf_qi[i] * R2[i] * R3[i]
+    if (title.find(query) >= 0):
+        score = score * 3
+    if (content.find(query) >= 0):
+        score = score * 1.5
     return score
 
-def average_length_docs(docs):
-    sum=0
-    for i in range(len(docs)):
-        sum=sum+len(docs[i][3])
-    average=sum/len(docs)
-    return average
 
-def sort(query,docs):
+def sort(query, docs):
     scoresdict={}
-    cutWords = deleteStopwords(cutWord(query))
-    idf_qi = [0 for _ in range(len(cutWords))]
+    cutQueryWords = deleteStopwords(cutWord(query))
+    idf_qi = [0 for _ in range(len(cutQueryWords))]
     N = len(docs)
-    for i in range(len(cutWords)):
-        nqi = 0
-        for j in range(len(docs)):
-            if (cutWords[i] in docs[j][3]):
-                nqi = nqi + 1
-        #print("{\"" + fenci[i] + "\" : " + str(nqi) + "},")
-        idf_qi[i] = math.log10((N + 0.5) / (nqi + 0.5))
+    for i in range(len(cutQueryWords)):
+        df_qi = 0
+        for doc in docs:
+            if (cutQueryWords[i] in doc[3]):
+                df_qi += 1
+        idf_qi[i] = math.log10((N + 0.5) / (df_qi + 0.5))
     for i in range(len(docs)):
-        scoresdict.update({i:get_score(query,docs[i],docs,cutWords,idf_qi)})
-    L=sorted(scoresdict.items(),key=lambda item:item[1])
+        scoresdict.update({i:get_score(query, docs[i], cutQueryWords, idf_qi)})
+    L=sorted(scoresdict.items(), key=lambda item:item[1])
     return L[-20:]
 
 
-def querys_docs(querys,docs):
+def querys_docs(querys, docs):
     dictt={}
     write_file('./submission_BM25.csv','query_id,doc_id'+'\n')
     for i in range(len(querys)):
@@ -73,13 +62,10 @@ def querys_docs(querys,docs):
         print('\n')
 
 
-def generateresult():
+if __name__=='__main__':
     path1 = './test_querys.csv'
     path2 = './test_docs.csv'
     querys = read_csv(path1)
     docs = read_csv(path2)
     dedupDocs = deduplication(docs)
     querys_docs(querys, dedupDocs)
-
-if __name__=='__main__':
-    generateresult()

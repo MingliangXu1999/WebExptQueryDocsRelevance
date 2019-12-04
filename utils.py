@@ -21,7 +21,7 @@ def write_file(filepath, string):
 
 
 #######################################
-# Separate words
+# Process words
 stopwordsList_fp = './stopwordsList.txt'
 
 def cutWord(words):
@@ -42,7 +42,15 @@ def deleteStopwords(cutWords):
             outlist.append(word)
     return outlist
 
-#######################################
 # Delete repeated docs
 def deduplication(docs):
     return list(set([tuple(doc) for doc in docs]))
+
+
+#######################################
+def average_length_docs(docs):
+    sum=0
+    for i in range(len(docs)):
+        sum=sum+len(docs[i][3])
+    average=sum/len(docs)
+    return average
