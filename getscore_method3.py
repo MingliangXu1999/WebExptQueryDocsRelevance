@@ -70,7 +70,7 @@ def querys_docs(querys, docs):
     docsLength = [len(deleteStopwords(jieba.cut(docInfo[3]))) for docInfo in docs]
 
     # #####################################################################
-    # 此块内容已经读入 '文章长度.txt'中,可以改写代码从文件读入以节约时间
+    # 此块内容已经读入 '文章分词结果长度.txt'中,可以改写代码从文件读入以节约时间
     # for i in range(len(docs)):
     #     docslength.append(len(deleteStopwords(jieba.cut(docs[i][3]))))
         # if(i%100==0):
